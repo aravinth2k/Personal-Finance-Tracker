@@ -94,9 +94,9 @@ function IncomeTab({ month, year }: { month: number; year: number }) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead className="hidden sm:table-cell">Source</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead className="hidden md:table-cell">Date</TableHead>
+              <TableHead className="hidden sm:table-cell">Source</TableHead>
               <TableHead className="w-20"></TableHead>
             </TableRow>
           </TableHeader>
@@ -104,9 +104,9 @@ function IncomeTab({ month, year }: { month: number; year: number }) {
             {entries.map((e) => (
               <TableRow key={e.id}>
                 <TableCell className="font-medium">{e.name}</TableCell>
-                <TableCell className="hidden sm:table-cell text-muted-foreground">{sourceName(e.income_source_id)}</TableCell>
                 <TableCell className="text-green-600 font-medium">{formatCurrency(e.amount)}</TableCell>
                 <TableCell className="hidden md:table-cell text-muted-foreground">{formatDate(e.date)}</TableCell>
+                <TableCell className="hidden sm:table-cell text-muted-foreground">{sourceName(e.income_source_id)}</TableCell>
                 <TableCell>
                   <div className="flex gap-1">
                     <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => openEdit(e)}><Pencil className="h-3.5 w-3.5" /></Button>
@@ -205,10 +205,10 @@ function ExpenseTab({ month, year }: { month: number; year: number }) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead className="hidden sm:table-cell">Category</TableHead>
-              <TableHead className="hidden sm:table-cell">Type</TableHead>
               <TableHead>Amount</TableHead>
+              <TableHead className="hidden sm:table-cell">Category</TableHead>
               <TableHead className="hidden md:table-cell">Date</TableHead>
+              <TableHead className="hidden sm:table-cell">Type</TableHead>
               <TableHead className="w-20"></TableHead>
             </TableRow>
           </TableHeader>
@@ -216,12 +216,12 @@ function ExpenseTab({ month, year }: { month: number; year: number }) {
             {entries.map((e) => (
               <TableRow key={e.id}>
                 <TableCell className="font-medium">{e.name}</TableCell>
+                <TableCell className="text-red-500 font-medium">{formatCurrency(e.amount)}</TableCell>
                 <TableCell className="hidden sm:table-cell text-muted-foreground">{catName(e.expense_category_id)}</TableCell>
+                <TableCell className="hidden md:table-cell text-muted-foreground">{formatDate(e.date)}</TableCell>
                 <TableCell className="hidden sm:table-cell">
                   <Badge variant={e.expense_type === 'Need' ? 'info' : 'warning'}>{e.expense_type}</Badge>
                 </TableCell>
-                <TableCell className="text-red-500 font-medium">{formatCurrency(e.amount)}</TableCell>
-                <TableCell className="hidden md:table-cell text-muted-foreground">{formatDate(e.date)}</TableCell>
                 <TableCell>
                   <div className="flex gap-1">
                     <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => openEdit(e)}><Pencil className="h-3.5 w-3.5" /></Button>
@@ -240,30 +240,28 @@ function ExpenseTab({ month, year }: { month: number; year: number }) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
             <div className="space-y-1"><Label>Name</Label><Input {...register('name')} />{errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}</div>
             <div className="space-y-1"><Label>Amount (₹)</Label><Input type="number" step="0.01" {...register('amount')} />{errors.amount && <p className="text-xs text-destructive">{errors.amount.message}</p>}</div>
+            <div className="space-y-1">
+              <Label>Category</Label>
+              <Controller name="expense_category_id" control={control} render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
+                  <SelectContent>{categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
+                </Select>
+              )} />
+              {errors.expense_category_id && <p className="text-xs text-destructive">{errors.expense_category_id.message}</p>}
+            </div>
             <div className="space-y-1"><Label>Date</Label><Input type="date" {...register('date')} /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label>Category</Label>
-                <Controller name="expense_category_id" control={control} render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
-                    <SelectContent>{categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}</SelectContent>
-                  </Select>
-                )} />
-                {errors.expense_category_id && <p className="text-xs text-destructive">{errors.expense_category_id.message}</p>}
-              </div>
-              <div className="space-y-1">
-                <Label>Type</Label>
-                <Controller name="expense_type" control={control} render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Need">Need</SelectItem>
-                      <SelectItem value="Want">Want</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )} />
-              </div>
+            <div className="space-y-1">
+              <Label>Type</Label>
+              <Controller name="expense_type" control={control} render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Need">Need</SelectItem>
+                    <SelectItem value="Want">Want</SelectItem>
+                  </SelectContent>
+                </Select>
+              )} />
             </div>
             <div className="space-y-1"><Label>Description <span className="text-muted-foreground">(optional)</span></Label><Textarea {...register('description')} rows={2} /></div>
             <DialogFooter>
@@ -338,10 +336,10 @@ function InvestmentTab({ month, year }: { month: number; year: number }) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead className="hidden sm:table-cell">Type</TableHead>
-              <TableHead className="hidden sm:table-cell">Risk</TableHead>
               <TableHead>Amount</TableHead>
+              <TableHead className="hidden sm:table-cell">Type</TableHead>
               <TableHead className="hidden md:table-cell">Date</TableHead>
+              <TableHead className="hidden sm:table-cell">Risk</TableHead>
               <TableHead className="w-20"></TableHead>
             </TableRow>
           </TableHeader>
@@ -349,12 +347,12 @@ function InvestmentTab({ month, year }: { month: number; year: number }) {
             {entries.map((e) => (
               <TableRow key={e.id}>
                 <TableCell className="font-medium">{e.name}</TableCell>
+                <TableCell className="text-blue-600 font-medium">{formatCurrency(e.amount)}</TableCell>
                 <TableCell className="hidden sm:table-cell text-muted-foreground">{typeName(e.investment_type_id)}</TableCell>
+                <TableCell className="hidden md:table-cell text-muted-foreground">{formatDate(e.date)}</TableCell>
                 <TableCell className="hidden sm:table-cell">
                   <Badge variant={RISK_VARIANTS[e.risk_type] ?? 'secondary'}>{e.risk_type}</Badge>
                 </TableCell>
-                <TableCell className="text-blue-600 font-medium">{formatCurrency(e.amount)}</TableCell>
-                <TableCell className="hidden md:table-cell text-muted-foreground">{formatDate(e.date)}</TableCell>
                 <TableCell>
                   <div className="flex gap-1">
                     <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => openEdit(e)}><Pencil className="h-3.5 w-3.5" /></Button>
@@ -373,29 +371,27 @@ function InvestmentTab({ month, year }: { month: number; year: number }) {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
             <div className="space-y-1"><Label>Name</Label><Input {...register('name')} />{errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}</div>
             <div className="space-y-1"><Label>Amount (₹)</Label><Input type="number" step="0.01" {...register('amount')} />{errors.amount && <p className="text-xs text-destructive">{errors.amount.message}</p>}</div>
+            <div className="space-y-1">
+              <Label>Type</Label>
+              <Controller name="investment_type_id" control={control} render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
+                  <SelectContent>{types.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
+                </Select>
+              )} />
+              {errors.investment_type_id && <p className="text-xs text-destructive">{errors.investment_type_id.message}</p>}
+            </div>
             <div className="space-y-1"><Label>Date</Label><Input type="date" {...register('date')} /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <Label>Type</Label>
-                <Controller name="investment_type_id" control={control} render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger><SelectValue placeholder="Type" /></SelectTrigger>
-                    <SelectContent>{types.map((t) => <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>)}</SelectContent>
-                  </Select>
-                )} />
-                {errors.investment_type_id && <p className="text-xs text-destructive">{errors.investment_type_id.message}</p>}
-              </div>
-              <div className="space-y-1">
-                <Label>Risk Level</Label>
-                <Controller name="risk_type" control={control} render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {['Low', 'Medium', 'High', 'Very High'].map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                )} />
-              </div>
+            <div className="space-y-1">
+              <Label>Risk Level</Label>
+              <Controller name="risk_type" control={control} render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {['Low', 'Medium', 'High', 'Very High'].map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              )} />
             </div>
             <div className="space-y-1"><Label>Description <span className="text-muted-foreground">(optional)</span></Label><Textarea {...register('description')} rows={2} /></div>
             <DialogFooter>

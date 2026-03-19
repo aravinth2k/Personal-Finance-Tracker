@@ -20,6 +20,21 @@ class ExpenseByCategory(BaseModel):
     amount: float
 
 
+class ExpenseByType(BaseModel):
+    expense_type: str
+    amount: float
+
+
+class InvestmentByRisk(BaseModel):
+    risk_type: str
+    amount: float
+
+
+class InvestmentByType(BaseModel):
+    investment_type_name: str
+    amount: float
+
+
 class YearlyOverview(BaseModel):
     year: int
     total_income: float
@@ -28,8 +43,9 @@ class YearlyOverview(BaseModel):
     net_savings: float
     months: list[MonthSummary]
     expense_by_category: list[ExpenseByCategory]
-
-
+    expense_by_type: list[ExpenseByType]
+    investment_by_risk: list[InvestmentByRisk]
+    investment_by_type: list[InvestmentByType]
 class MonthlyOverview(BaseModel):
     month: int
     year: int

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
+  BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
 import { TrendingUp, TrendingDown, Wallet, PiggyBank, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -235,80 +235,204 @@ export function Overview() {
             </CardContent>
           </Card>
 
-          {/* Line Chart — Net Savings Trend */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Net Savings Trend</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                  <YAxis tickFormatter={shortAmount} tick={{ fontSize: 11 }} width={60} />
-                  <Tooltip content={<ChartTooltip />} />
-                  <Line
-                    type="monotone"
-                    dataKey="Net Savings"
-                    stroke="#10b981"
-                    strokeWidth={2}
-                    dot={{ r: 4 }}
-                    activeDot={{ r: 6 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Pie Chart — Expense by Category */}
+            {hasExpenseData && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Expense Breakdown by Category</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col xl:flex-row items-center gap-6">
+                    <ResponsiveContainer width="100%" height={280}>
+                      <PieChart>
+                        <Pie
+                          data={d.expense_by_category}
+                          dataKey="amount"
+                          nameKey="category_name"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={110}
+                          label={({ category_name, percent }) =>
+                            `${category_name} ${(percent * 100).toFixed(0)}%`
+                          }
+                          labelLine={false}
+                        >
+                          {d.expense_by_category.map((_, i) => (
+                            <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<PieTooltip />} />
+                      </PieChart>
+                    </ResponsiveContainer>
 
-          {/* Pie Chart — Expense by Category */}
-          {hasExpenseData && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Expense Breakdown by Category</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col md:flex-row items-center gap-6">
-                  <ResponsiveContainer width="100%" height={280}>
-                    <PieChart>
-                      <Pie
-                        data={d.expense_by_category}
-                        dataKey="amount"
-                        nameKey="category_name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={110}
-                        label={({ category_name, percent }) =>
-                          `${category_name} ${(percent * 100).toFixed(0)}%`
-                        }
-                        labelLine={false}
-                      >
-                        {d.expense_by_category.map((_, i) => (
-                          <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip content={<PieTooltip />} />
-                    </PieChart>
-                  </ResponsiveContainer>
-
-                  {/* Legend table */}
-                  <div className="w-full md:w-64 shrink-0 space-y-1 text-sm">
-                    {d.expense_by_category.map((item, i) => (
-                      <div key={item.category_name} className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="inline-block h-3 w-3 rounded-full shrink-0"
-                            style={{ background: PIE_COLORS[i % PIE_COLORS.length] }}
-                          />
-                          <span className="text-muted-foreground truncate max-w-[120px]">{item.category_name}</span>
+                    {/* Legend table */}
+                    <div className="w-full xl:w-48 shrink-0 space-y-1 text-sm">
+                      {d.expense_by_category.map((item, i) => (
+                        <div key={item.category_name} className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <span
+                              className="inline-block h-3 w-3 rounded-full shrink-0"
+                              style={{ background: PIE_COLORS[i % PIE_COLORS.length] }}
+                            />
+                            <span className="text-muted-foreground truncate">{item.category_name}</span>
+                          </div>
+                          <span className="font-medium shrink-0">{formatCurrency(item.amount)}</span>
                         </div>
-                        <span className="font-medium">{formatCurrency(item.amount)}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Pie Chart — Expense by Type */}
+            {d.expense_by_type.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Expense Breakdown (Need vs Want)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col xl:flex-row items-center gap-6">
+                    <ResponsiveContainer width="100%" height={280}>
+                      <PieChart>
+                        <Pie
+                          data={d.expense_by_type}
+                          dataKey="amount"
+                          nameKey="expense_type"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={110}
+                          label={({ expense_type, percent }) =>
+                            `${expense_type} ${(percent * 100).toFixed(0)}%`
+                          }
+                          labelLine={false}
+                        >
+                          {d.expense_by_type.map((_, i) => (
+                            <Cell key={i} fill={PIE_COLORS[(i + 2) % PIE_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<PieTooltip />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+
+                    <div className="w-full xl:w-48 shrink-0 space-y-1 text-sm">
+                      {d.expense_by_type.map((item, i) => (
+                        <div key={item.expense_type} className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <span
+                              className="inline-block h-3 w-3 rounded-full shrink-0"
+                              style={{ background: PIE_COLORS[(i + 2) % PIE_COLORS.length] }}
+                            />
+                            <span className="text-muted-foreground truncate">{item.expense_type}</span>
+                          </div>
+                          <span className="font-medium shrink-0">{formatCurrency(item.amount)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Pie Chart — Investment by Risk */}
+            {d.investment_by_risk.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Investment by Risk</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col xl:flex-row items-center gap-6">
+                    <ResponsiveContainer width="100%" height={280}>
+                      <PieChart>
+                        <Pie
+                          data={d.investment_by_risk}
+                          dataKey="amount"
+                          nameKey="risk_type"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={110}
+                          label={({ risk_type, percent }) =>
+                            `${risk_type} ${(percent * 100).toFixed(0)}%`
+                          }
+                          labelLine={false}
+                        >
+                          {d.investment_by_risk.map((_, i) => (
+                            <Cell key={i} fill={PIE_COLORS[(i + 4) % PIE_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<PieTooltip />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+
+                    <div className="w-full xl:w-48 shrink-0 space-y-1 text-sm">
+                      {d.investment_by_risk.map((item, i) => (
+                        <div key={item.risk_type} className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <span
+                              className="inline-block h-3 w-3 rounded-full shrink-0"
+                              style={{ background: PIE_COLORS[(i + 4) % PIE_COLORS.length] }}
+                            />
+                            <span className="text-muted-foreground truncate">{item.risk_type}</span>
+                          </div>
+                          <span className="font-medium shrink-0">{formatCurrency(item.amount)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Pie Chart — Investment by Type */}
+            {d.investment_by_type.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Investment by Type</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-col xl:flex-row items-center gap-6">
+                    <ResponsiveContainer width="100%" height={280}>
+                      <PieChart>
+                        <Pie
+                          data={d.investment_by_type}
+                          dataKey="amount"
+                          nameKey="investment_type_name"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={110}
+                          label={({ investment_type_name, percent }) =>
+                            `${investment_type_name} ${(percent * 100).toFixed(0)}%`
+                          }
+                          labelLine={false}
+                        >
+                          {d.investment_by_type.map((_, i) => (
+                            <Cell key={i} fill={PIE_COLORS[(i + 6) % PIE_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<PieTooltip />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+
+                    <div className="w-full xl:w-48 shrink-0 space-y-1 text-sm">
+                      {d.investment_by_type.map((item, i) => (
+                        <div key={item.investment_type_name} className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <span
+                              className="inline-block h-3 w-3 rounded-full shrink-0"
+                              style={{ background: PIE_COLORS[(i + 6) % PIE_COLORS.length] }}
+                            />
+                            <span className="text-muted-foreground truncate">{item.investment_type_name}</span>
+                          </div>
+                          <span className="font-medium shrink-0">{formatCurrency(item.amount)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </>
       )}
     </div>

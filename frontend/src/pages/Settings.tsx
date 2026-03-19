@@ -4,12 +4,16 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select'
+import {
   useIncomeSources, useCreateIncomeSource, useUpdateIncomeSource, useDeleteIncomeSource,
   useExpenseCategories, useCreateExpenseCategory, useUpdateExpenseCategory, useDeleteExpenseCategory,
   useInvestmentTypes, useCreateInvestmentType, useUpdateInvestmentType, useDeleteInvestmentType,
 } from '@/hooks/useSettings'
 import type { IncomeSource, ExpenseCategory, InvestmentType } from '@/types/finance'
 
+type LookupType = 'income' | 'expense' | 'investment'
 type LookupItem = IncomeSource | ExpenseCategory | InvestmentType
 
 interface LookupListProps {
@@ -108,6 +112,7 @@ function LookupList({
 }
 
 export function Settings() {
+  const [activeTab, setActiveTab] = useState<LookupType>('income')
   const [incomeDeleteError, setIncomeDeleteError] = useState<string | null>(null)
   const [expenseDeleteError, setExpenseDeleteError] = useState<string | null>(null)
   const [investmentDeleteError, setInvestmentDeleteError] = useState<string | null>(null)
@@ -129,9 +134,32 @@ export function Settings() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold">Settings</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Settings</h1>
+      </div>
 
-      <LookupList
+      <Card>
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div className="space-y-2 text-sm font-medium">
+              <label>Manage Category</label>
+              <Select value={activeTab} onValueChange={(val: LookupType) => setActiveTab(val)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select what to manage" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="income">Income Sources</SelectItem>
+                  <SelectItem value="expense">Expense Categories</SelectItem>
+                  <SelectItem value="investment">Investment Types</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {activeTab === 'income' && (
+        <LookupList
         title="Income Sources"
         items={incomeSources}
         isLoading={loadingIncome}
@@ -148,7 +176,9 @@ export function Settings() {
         deleteError={incomeDeleteError}
         clearDeleteError={() => setIncomeDeleteError(null)}
       />
+      )}
 
+      {activeTab === 'expense' && (
       <LookupList
         title="Expense Categories"
         items={expenseCategories}
@@ -166,7 +196,9 @@ export function Settings() {
         deleteError={expenseDeleteError}
         clearDeleteError={() => setExpenseDeleteError(null)}
       />
+      )}
 
+      {activeTab === 'investment' && (
       <LookupList
         title="Investment Types"
         items={investmentTypes}
@@ -184,6 +216,7 @@ export function Settings() {
         deleteError={investmentDeleteError}
         clearDeleteError={() => setInvestmentDeleteError(null)}
       />
+      )}
     </div>
   )
 }

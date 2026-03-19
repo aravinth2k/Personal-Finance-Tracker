@@ -6,9 +6,12 @@ from sqlalchemy.orm import Session
 from app.models.expense import Expense
 from app.models.income import Income
 from app.models.investment import Investment
-from app.models.lookup import ExpenseCategory
+from app.models.lookup import ExpenseCategory, InvestmentType
 from app.schemas.overview import (
     ExpenseByCategory,
+    ExpenseByType,
+    InvestmentByRisk,
+    InvestmentByType,
     MonthlyOverview,
     MonthSummary,
     MONTH_NAMES,
@@ -47,6 +50,31 @@ def get_yearly_overview(db: Session, user_id: uuid.UUID, year: int) -> YearlyOve
         .order_by(func.sum(Expense.amount).desc())
         .all()
     )
+    # Expenses grouped by expense_type
+    expense_type_rows = (
+        db.query(Expense.expense_type, func.sum(Expense.amount).label("total"))
+        .filter(Expense.user_id == user_id, Expense.year == year)
+        .group_by(Expense.expense_type)
+        .order_by(func.sum(Expense.amount).desc())
+        .all()
+    )
+    # Investments grouped by risk_type
+    investment_risk_rows = (
+        db.query(Investment.risk_type, func.sum(Investment.amount).label("total"))
+        .filter(Investment.user_id == user_id, Investment.year == year)
+        .group_by(Investment.risk_type)
+        .order_by(func.sum(Investment.amount).desc())
+        .all()
+    )
+    # Investments grouped by type
+    investment_type_rows = (
+        db.query(InvestmentType.name, func.sum(Investment.amount).label("total"))
+        .join(Investment, Investment.investment_type_id == InvestmentType.id)
+        .filter(Investment.user_id == user_id, Investment.year == year)
+        .group_by(InvestmentType.name)
+        .order_by(func.sum(Investment.amount).desc())
+        .all()
+    )
 
     income_map = {r.month: float(r.total) for r in income_rows}
     expense_map = {r.month: float(r.total) for r in expense_rows}
@@ -82,6 +110,18 @@ def get_yearly_overview(db: Session, user_id: uuid.UUID, year: int) -> YearlyOve
         expense_by_category=[
             ExpenseByCategory(category_name=r.name, amount=float(r.total))
             for r in category_rows
+        ],
+        expense_by_type=[
+            ExpenseByType(expense_type=r.expense_type, amount=float(r.total))
+            for r in expense_type_rows
+        ],
+        investment_by_risk=[
+            InvestmentByRisk(risk_type=r.risk_type, amount=float(r.total))
+            for r in investment_risk_rows
+        ],
+        investment_by_type=[
+            InvestmentByType(investment_type_name=r.name, amount=float(r.total))
+            for r in investment_type_rows
         ],
     )
 
