@@ -112,6 +112,7 @@ personal-finance-app/
 ├── docker-compose.yml
 ├── .gitignore
 ├── LICENSE                      # MIT
+├── INSTALLATION.md              # Full step-by-step setup guide
 └── README.md
 ```
 
@@ -320,12 +321,13 @@ is not user-customizable.
 
 ## Development Phases
 
-### Phase 1 — Project Setup
-- [ ] Initialize repo with MIT license, README, .gitignore
-- [ ] Set up Docker Compose (postgres + backend + frontend)
-- [ ] FastAPI app skeleton with health check endpoint
-- [ ] Vite + React + Tailwind + shadcn/ui scaffold
-- [ ] Alembic migration setup
+### Phase 1 — Project Setup ✅
+- [x] Initialize repo with MIT license, README, .gitignore
+- [x] Set up Docker Compose (postgres + backend + frontend)
+- [x] FastAPI app skeleton with health check endpoint
+- [x] Vite + React + Tailwind + shadcn/ui scaffold
+- [x] Alembic migration setup
+- [x] INSTALLATION.md — full step-by-step setup guide
 
 ### Phase 2 — Auth
 - [ ] User registration & login endpoints
@@ -361,10 +363,90 @@ is not user-customizable.
 
 - **License:** MIT
 - **Branch strategy:** `main` (stable) + feature branches (`feat/`, `fix/`)
-- **Commit style:** Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`)
+- **Commit style:** Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`) — see Granular Commit Strategy below
 - **PR template:** included in `.github/`
 - **Issue templates:** Bug report + Feature request
 - **Contributing guide:** `CONTRIBUTING.md`
+- **Installation guide:** `INSTALLATION.md`
+
+---
+
+## Granular Commit Strategy
+
+Every commit must represent **one logical, independently identifiable change**. This makes the git history readable and makes it easy to trace when a specific feature was introduced, modified, or removed.
+
+### Rules
+
+1. **One file or one concern per commit** — do not mix backend model changes with frontend UI changes in the same commit.
+2. **Commit immediately after each unit of work** — don't batch multiple features into one commit.
+3. **The commit message must say what changed and why** (use the body when needed).
+4. **Prefer small, frequent commits** over large, infrequent ones.
+
+### Commit Type Reference
+
+| Type       | When to use                                              |
+|------------|----------------------------------------------------------|
+| `feat`     | A new feature or endpoint added                          |
+| `fix`      | A bug fix                                                |
+| `chore`    | Tooling, config, dependency updates (no production code) |
+| `docs`     | Documentation only changes                              |
+| `refactor` | Code restructuring with no behavior change               |
+| `test`     | Adding or updating tests                                 |
+| `style`    | Formatting, whitespace (no logic change)                 |
+| `migration`| A new Alembic migration file                             |
+
+### Scope Convention
+
+Use a scope in parentheses to identify the area of the codebase:
+
+```
+feat(auth): add JWT login endpoint
+feat(income): add GET /income list endpoint
+feat(expenses): add expense ORM model
+migration(users): create users table
+feat(frontend/login): add Login page UI
+feat(frontend/auth): add auth context and protected routes
+chore(deps): pin pydantic to 2.9.2
+docs: add INSTALLATION.md
+```
+
+### Examples by Phase
+
+**Phase 2 — Auth (ideal granular commits)**
+```
+feat(auth): add User ORM model
+migration(users): create users table
+feat(auth): add register endpoint with password hashing
+feat(auth): add login endpoint returning JWT
+feat(auth): add /me endpoint with JWT dependency
+feat(auth): add get_current_user dependency
+feat(frontend/register): add Register page and form validation
+feat(frontend/login): add Login page and form validation
+feat(frontend/auth): add auth context with Zustand store
+feat(frontend/auth): add ProtectedRoute wrapper component
+```
+
+**Phase 3 — Core CRUD (ideal granular commits)**
+```
+feat(lookup): add income_sources ORM model
+feat(lookup): add expense_categories ORM model
+feat(lookup): add investment_types ORM model
+migration(lookup): create lookup tables
+feat(lookup): seed default lookup values on user registration
+feat(settings): add GET/POST/PUT/DELETE income-sources endpoints
+feat(settings): add GET/POST/PUT/DELETE expense-categories endpoints
+feat(settings): add GET/POST/PUT/DELETE investment-types endpoints
+feat(income): add income ORM model and migration
+feat(income): add GET/POST/PUT/DELETE income endpoints
+feat(expenses): add expense ORM model and migration
+feat(expenses): add GET/POST/PUT/DELETE expenses endpoints
+feat(investments): add investment ORM model and migration
+feat(investments): add GET/POST/PUT/DELETE investments endpoints
+feat(frontend/settings): add Settings page with lookup management UI
+feat(frontend/month): add MonthDetail page with Income tab
+feat(frontend/month): add Expenses tab to MonthDetail page
+feat(frontend/month): add Investments tab to MonthDetail page
+```
 
 ---
 
