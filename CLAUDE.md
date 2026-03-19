@@ -335,15 +335,15 @@ is not user-customizable.
 - [x] Login / Register pages on frontend
 - [x] Auth context + protected routes
 
-### Phase 3 — Core CRUD
-- [ ] Lookup table models (income_sources, expense_categories, investment_types) + migrations
-- [ ] Seed default values for each lookup table on user registration
-- [ ] Settings API endpoints (GET/POST/PUT/DELETE for all three lookup tables)
-- [ ] Income, Expense, Investment models + migrations (FK to lookup tables)
-- [ ] CRUD endpoints for all three (income, expenses, investments)
-- [ ] Settings page on frontend (manage lookup options)
-- [ ] Monthly view page with tabs and data tables
-- [ ] Add/Edit/Delete modals (dropdowns populated from user's lookup lists)
+### Phase 3 — Core CRUD ✅
+- [x] Lookup table models (income_sources, expense_categories, investment_types) + migrations
+- [x] Seed default values for each lookup table on user registration
+- [x] Settings API endpoints (GET/POST/PUT/DELETE for all three lookup tables)
+- [x] Income, Expense, Investment models + migrations (FK to lookup tables)
+- [x] CRUD endpoints for all three (income, expenses, investments)
+- [x] Settings page on frontend (manage lookup options)
+- [x] Monthly view page with tabs and data tables
+- [x] Add/Edit/Delete modals (dropdowns populated from user's lookup lists)
 
 ### Phase 4 — Overview & Charts
 - [ ] Overview API endpoint (yearly + monthly aggregation)
