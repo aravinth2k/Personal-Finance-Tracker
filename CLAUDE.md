@@ -345,10 +345,10 @@ is not user-customizable.
 - [x] Monthly view page with tabs and data tables
 - [x] Add/Edit/Delete modals (dropdowns populated from user's lookup lists)
 
-### Phase 4 — Overview & Charts
-- [ ] Overview API endpoint (yearly + monthly aggregation)
-- [ ] Overview page with summary cards
-- [ ] Bar, Pie, and Line charts via Recharts
+### Phase 4 — Overview & Charts ✅
+- [x] Overview API endpoint (yearly + monthly aggregation)
+- [x] Overview page with summary cards
+- [x] Bar, Pie, and Line charts via Recharts
 
 ### Phase 5 — Polish & Open Source Prep
 - [ ] Responsive design QA (mobile, tablet, desktop)
