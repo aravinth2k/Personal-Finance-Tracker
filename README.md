@@ -30,51 +30,26 @@ Fully responsive across **mobile**, **tablet**, and **desktop** devices.
 
 ## Getting Started
 
-### Prerequisites
+For a complete step-by-step walkthrough — including installing Python, Node.js, PostgreSQL, and Docker — see the **[Installation Guide](./INSTALLATION.md)**.
 
-- [Docker](https://www.docker.com/) and Docker Compose
-- Git
-
-### 1. Clone the repository
+### Quick start (Docker)
 
 ```bash
-git clone https://github.com/your-username/personal-finance-app.git
-cd personal-finance-app
-```
+git clone https://github.com/aravinth2k/Personal-Finance-Tracker.git
+cd Personal-Finance-Tracker
 
-### 2. Configure environment variables
-
-```bash
-cp backend/.env.example backend/.env
+cp backend/.env.example backend/.env   # set SECRET_KEY inside
 cp frontend/.env.example frontend/.env
-```
 
-Edit the `.env` files as needed. Key variables:
-
-**Backend (`backend/.env`)**
-```
-DATABASE_URL=postgresql://user:password@localhost:5432/finance_db
-SECRET_KEY=your-secret-key
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=60
-```
-
-**Frontend (`frontend/.env`)**
-```
-VITE_API_BASE_URL=http://localhost:8000/api/v1
-```
-
-### 3. Start the application
-
-```bash
 docker compose up --build
+docker compose exec backend alembic upgrade head
 ```
 
-| Service   | URL                          |
-|-----------|------------------------------|
-| Frontend  | http://localhost:5173        |
-| Backend   | http://localhost:8000        |
-| API Docs  | http://localhost:8000/docs   |
+| Service            | URL                        |
+|--------------------|----------------------------|
+| Frontend           | http://localhost:5173      |
+| Backend API        | http://localhost:8000      |
+| API Docs (Swagger) | http://localhost:8000/docs |
 
 ---
 
@@ -85,6 +60,7 @@ personal-finance-app/
 ├── backend/          # FastAPI app, models, CRUD, migrations
 ├── frontend/         # React + TypeScript app
 ├── docker-compose.yml
+├── INSTALLATION.md   # Full setup guide
 └── README.md
 ```
 
@@ -114,7 +90,7 @@ Full interactive docs available at `/docs` when the backend is running.
 Contributions are welcome! Please read [CONTRIBUTING.md](./CONTRIBUTING.md) and open a pull request against the `main` branch.
 
 - **Branch naming:** `feat/`, `fix/`, `chore/`, `docs/`
-- **Commit style:** [Conventional Commits](https://www.conventionalcommits.org/)
+- **Commit style:** [Conventional Commits](https://www.conventionalcommits.org/) — one logical change per commit
 
 ---
 
