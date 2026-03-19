@@ -5,6 +5,7 @@ import { AppLayout } from '@/components/layout/AppLayout'
 import { ProtectedRoute } from '@/components/layout/ProtectedRoute'
 import { Login } from '@/pages/Login'
 import { Register } from '@/pages/Register'
+import { Overview } from '@/pages/Overview'
 import { Settings } from '@/pages/Settings'
 import { MonthDetail } from '@/pages/MonthDetail'
 
@@ -20,15 +21,7 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
-              <Route
-                path="/overview"
-                element={
-                  <div className="p-4">
-                    <h1 className="text-2xl font-bold">Overview</h1>
-                    <p className="text-muted-foreground mt-2">Coming in Phase 4.</p>
-                  </div>
-                }
-              />
+              <Route path="/overview" element={<Overview />} />
               <Route path="/month/:year/:month" element={<MonthDetail />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
