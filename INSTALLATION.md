@@ -121,16 +121,9 @@ docker compose up --build
 ```
 
 First run downloads images and installs dependencies — this takes a few minutes.
+Database migrations run automatically on every startup — watch the backend logs for `Running Alembic migrations...` then `Starting server...`.
 
-### Step 3 — Run database migrations
-
-In a **new terminal** (while the containers are running):
-
-```bash
-docker compose exec backend alembic upgrade head
-```
-
-### Step 4 — Open the app
+### Step 3 — Open the app
 
 | Service        | URL                        |
 |----------------|----------------------------|
@@ -142,8 +135,39 @@ docker compose exec backend alembic upgrade head
 
 ```bash
 docker compose down          # stop containers, keep data
-docker compose down -v       # stop containers and delete database volume
+docker compose down -v       # stop containers AND delete database volume (data lost)
 ```
+
+---
+
+## Data Persistence
+
+The database is stored in the `postgres_data` named Docker volume on your host machine — completely independent of the containers themselves.
+
+| Command | Containers | Volume | Data |
+|---------|------------|--------|------|
+| `docker compose down` | Stopped | Kept | Safe |
+| `docker compose down -v` | Stopped | **Deleted** | **Lost** |
+| `docker compose up` (after down) | Restarted | Reused | Restored |
+| `make db-backup` | Running | Untouched | Dumped to `.sql` file |
+
+> **Warning:** `docker compose down -v` permanently deletes all your data. Use `make db-backup` first if you need to preserve it.
+
+---
+
+## Makefile Commands
+
+A `Makefile` is included for common dev tasks (requires `make` to be installed):
+
+| Command | Description |
+|---------|-------------|
+| `make up` | Build and start all services |
+| `make down` | Stop all containers |
+| `make logs` | Tail backend logs |
+| `make shell` | Open a shell inside the backend container |
+| `make db-shell` | Open a psql session in the postgres container |
+| `make db-backup` | Dump the database to a timestamped `.sql` file in the project root |
+| `make db-restore FILE=backup.sql` | Restore the database from a `.sql` file |
 
 ---
 
