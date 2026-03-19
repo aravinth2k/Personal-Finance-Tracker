@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
 from app.core.security import create_access_token, verify_password
+from app.crud.lookup import seed_default_lookups
 from app.crud.user import create_user, get_user_by_email
 from app.models.user import User
 from app.schemas.user import LoginRequest, Token, UserCreate, UserOut
@@ -18,7 +19,9 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered",
         )
-    return create_user(db, user_in)
+    user = create_user(db, user_in)
+    seed_default_lookups(db, user.id)
+    return user
 
 
 @router.post("/login", response_model=Token)
