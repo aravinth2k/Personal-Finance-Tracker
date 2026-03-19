@@ -329,11 +329,11 @@ is not user-customizable.
 - [x] Alembic migration setup
 - [x] INSTALLATION.md — full step-by-step setup guide
 
-### Phase 2 — Auth
-- [ ] User registration & login endpoints
-- [ ] JWT middleware on protected routes
-- [ ] Login / Register pages on frontend
-- [ ] Auth context + protected routes
+### Phase 2 — Auth ✅
+- [x] User registration & login endpoints
+- [x] JWT middleware on protected routes
+- [x] Login / Register pages on frontend
+- [x] Auth context + protected routes
 
 ### Phase 3 — Core CRUD
 - [ ] Lookup table models (income_sources, expense_categories, investment_types) + migrations
