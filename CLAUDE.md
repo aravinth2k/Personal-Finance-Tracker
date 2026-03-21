@@ -16,6 +16,7 @@ Designed to be fully responsive and usable across **mobile**, **tablet**, and **
 - **Database:** PostgreSQL (via SQLAlchemy ORM + Alembic for migrations)
 - **Auth:** JWT-based authentication (python-jose + passlib)
 - **Validation:** Pydantic v2
+- **Logging:** Python's built-in `logging` module (RotatingFileHandler at `logs/app.log`)
 - **Server:** Uvicorn
 
 ### Frontend
@@ -54,6 +55,7 @@ personal-finance-app/
 │   │   ├── core/
 │   │   │   ├── config.py        # Settings via pydantic-settings
 │   │   │   ├── database.py      # SQLAlchemy engine + session
+│   │   │   ├── logging.py       # Centralized app logging
 │   │   │   └── security.py      # JWT helpers
 │   │   ├── models/              # SQLAlchemy ORM models
 │   │   │   ├── user.py
@@ -74,6 +76,7 @@ personal-finance-app/
 │   │   │   └── lookup.py
 │   │   └── main.py              # FastAPI app entry point
 │   ├── alembic/                 # DB migrations
+│   ├── logs/                    # Application log files
 │   ├── tests/
 │   ├── requirements.txt
 │   ├── Dockerfile

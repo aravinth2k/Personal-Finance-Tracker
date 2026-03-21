@@ -43,6 +43,9 @@ Thumbs.db
 # Docker
 *.log
 
+# Backend Logs
+backend/logs/
+
 # Coverage
 htmlcov/
 .coverage
