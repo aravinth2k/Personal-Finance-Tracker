@@ -1,5 +1,5 @@
 import uuid
-from datetime import date, datetime
+import datetime
 from decimal import Decimal
 from typing import Literal, Optional
 
@@ -11,7 +11,7 @@ ExpenseType = Literal["Need", "Want"]
 class ExpenseCreate(BaseModel):
     name: str
     amount: Decimal
-    date: date
+    date: datetime.date
     expense_category_id: uuid.UUID
     expense_type: ExpenseType
     description: Optional[str] = None
@@ -20,7 +20,7 @@ class ExpenseCreate(BaseModel):
 class ExpenseUpdate(BaseModel):
     name: Optional[str] = None
     amount: Optional[Decimal] = None
-    date: Optional[date] = None
+    date: Optional[datetime.date] = None
     expense_category_id: Optional[uuid.UUID] = None
     expense_type: Optional[ExpenseType] = None
     description: Optional[str] = None
@@ -30,13 +30,13 @@ class ExpenseOut(BaseModel):
     id: uuid.UUID
     name: str
     amount: Decimal
-    date: date
+    date: datetime.date
     month: int
     year: int
     expense_category_id: uuid.UUID
     expense_type: str
     description: Optional[str]
-    created_at: datetime
+    created_at: datetime.datetime
 
     model_config = {"from_attributes": True}
 
