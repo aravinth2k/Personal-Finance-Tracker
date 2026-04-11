@@ -65,16 +65,33 @@ function IncomeTab({ month, year }: { month: number; year: number }) {
     defaultValues: { date: defaultDate },
   })
 
-  const openAdd = () => { reset({ date: defaultDate }); setEditing(null); setOpen(true) }
-  const openEdit = (e: Income) => {
-    reset({ name: e.name, amount: e.amount, date: e.date, income_source_id: e.income_source_id, description: e.description ?? '' })
-    setEditing(e); setOpen(true)
-  }
+  useEffect(() => {
+    if (open) {
+      if (editing) {
+        reset({
+          name: editing.name,
+          amount: editing.amount,
+          date: editing.date,
+          income_source_id: editing.income_source_id,
+          description: editing.description ?? ''
+        })
+      } else {
+        reset({ date: defaultDate, name: '', amount: undefined as unknown as number, income_source_id: '', description: '' })
+      }
+    }
+  }, [open, editing, reset, defaultDate])
+
+  const openAdd = () => { setEditing(null); setOpen(true) }
+  const openEdit = (e: Income) => { setEditing(e); setOpen(true) }
 
   const onSubmit = async (data: IncomeForm) => {
-    if (editing) await update.mutateAsync({ id: editing.id, data })
-    else await create.mutateAsync(data)
-    setOpen(false)
+    try {
+      if (editing) await update.mutateAsync({ id: editing.id, data })
+      else await create.mutateAsync(data)
+      setOpen(false)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const total = entries.reduce((s, e) => s + e.amount, 0)
@@ -139,7 +156,9 @@ function IncomeTab({ month, year }: { month: number; year: number }) {
             <div className="space-y-1"><Label>Description <span className="text-muted-foreground">(optional)</span></Label><Textarea {...register('description')} rows={2} /></div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save'}</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (editing ? 'Updating...' : 'Saving...') : (editing ? 'Update' : 'Save')}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -176,16 +195,34 @@ function ExpenseTab({ month, year }: { month: number; year: number }) {
     defaultValues: { date: defaultDate, expense_type: 'Need' },
   })
 
-  const openAdd = () => { reset({ date: defaultDate, expense_type: 'Need' }); setEditing(null); setOpen(true) }
-  const openEdit = (e: Expense) => {
-    reset({ name: e.name, amount: e.amount, date: e.date, expense_category_id: e.expense_category_id, expense_type: e.expense_type, description: e.description ?? '' })
-    setEditing(e); setOpen(true)
-  }
+  useEffect(() => {
+    if (open) {
+      if (editing) {
+        reset({
+          name: editing.name,
+          amount: editing.amount,
+          date: editing.date,
+          expense_category_id: editing.expense_category_id,
+          expense_type: editing.expense_type,
+          description: editing.description ?? ''
+        })
+      } else {
+        reset({ date: defaultDate, name: '', amount: undefined as unknown as number, expense_category_id: '', expense_type: 'Need', description: '' })
+      }
+    }
+  }, [open, editing, reset, defaultDate])
+
+  const openAdd = () => { setEditing(null); setOpen(true) }
+  const openEdit = (e: Expense) => { setEditing(e); setOpen(true) }
 
   const onSubmit = async (data: ExpenseForm) => {
-    if (editing) await update.mutateAsync({ id: editing.id, data })
-    else await create.mutateAsync(data)
-    setOpen(false)
+    try {
+      if (editing) await update.mutateAsync({ id: editing.id, data })
+      else await create.mutateAsync(data)
+      setOpen(false)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const total = entries.reduce((s, e) => s + e.amount, 0)
@@ -266,7 +303,9 @@ function ExpenseTab({ month, year }: { month: number; year: number }) {
             <div className="space-y-1"><Label>Description <span className="text-muted-foreground">(optional)</span></Label><Textarea {...register('description')} rows={2} /></div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save'}</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (editing ? 'Updating...' : 'Saving...') : (editing ? 'Update' : 'Save')}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -307,16 +346,34 @@ function InvestmentTab({ month, year }: { month: number; year: number }) {
     defaultValues: { date: defaultDate, risk_type: 'Medium' },
   })
 
-  const openAdd = () => { reset({ date: defaultDate, risk_type: 'Medium' }); setEditing(null); setOpen(true) }
-  const openEdit = (e: Investment) => {
-    reset({ name: e.name, amount: e.amount, date: e.date, investment_type_id: e.investment_type_id, risk_type: e.risk_type, description: e.description ?? '' })
-    setEditing(e); setOpen(true)
-  }
+  useEffect(() => {
+    if (open) {
+      if (editing) {
+        reset({
+          name: editing.name,
+          amount: editing.amount,
+          date: editing.date,
+          investment_type_id: editing.investment_type_id,
+          risk_type: editing.risk_type,
+          description: editing.description ?? ''
+        })
+      } else {
+        reset({ date: defaultDate, name: '', amount: undefined as unknown as number, investment_type_id: '', risk_type: 'Medium', description: '' })
+      }
+    }
+  }, [open, editing, reset, defaultDate])
+
+  const openAdd = () => { setEditing(null); setOpen(true) }
+  const openEdit = (e: Investment) => { setEditing(e); setOpen(true) }
 
   const onSubmit = async (data: InvestmentForm) => {
-    if (editing) await update.mutateAsync({ id: editing.id, data })
-    else await create.mutateAsync(data)
-    setOpen(false)
+    try {
+      if (editing) await update.mutateAsync({ id: editing.id, data })
+      else await create.mutateAsync(data)
+      setOpen(false)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   const total = entries.reduce((s, e) => s + e.amount, 0)
@@ -396,7 +453,9 @@ function InvestmentTab({ month, year }: { month: number; year: number }) {
             <div className="space-y-1"><Label>Description <span className="text-muted-foreground">(optional)</span></Label><Textarea {...register('description')} rows={2} /></div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-              <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Save'}</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (editing ? 'Updating...' : 'Saving...') : (editing ? 'Update' : 'Save')}
+              </Button>
             </DialogFooter>
           </form>
         </DialogContent>
