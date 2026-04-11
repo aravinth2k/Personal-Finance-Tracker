@@ -89,8 +89,10 @@ function IncomeTab({ month, year }: { month: number; year: number }) {
       if (editing) await update.mutateAsync({ id: editing.id, data })
       else await create.mutateAsync(data)
       setOpen(false)
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
+      const msg = err?.response?.data?.detail
+      alert(`Update failed: ${typeof msg === 'string' ? msg : JSON.stringify(msg) || err.message}`)
     }
   }
 
@@ -220,8 +222,10 @@ function ExpenseTab({ month, year }: { month: number; year: number }) {
       if (editing) await update.mutateAsync({ id: editing.id, data })
       else await create.mutateAsync(data)
       setOpen(false)
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
+      const msg = err?.response?.data?.detail
+      alert(`Update failed: ${typeof msg === 'string' ? msg : JSON.stringify(msg) || err.message}`)
     }
   }
 
@@ -371,8 +375,10 @@ function InvestmentTab({ month, year }: { month: number; year: number }) {
       if (editing) await update.mutateAsync({ id: editing.id, data })
       else await create.mutateAsync(data)
       setOpen(false)
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
+      const msg = err?.response?.data?.detail
+      alert(`Update failed: ${typeof msg === 'string' ? msg : JSON.stringify(msg) || err.message}`)
     }
   }
 
